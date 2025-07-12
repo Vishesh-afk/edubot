@@ -35,13 +35,14 @@
 #     return {}
 # sheets_service.py
 # sheets_service.py
-import os
+
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import datetime
-creds_json = os.environ.get("GOOGLE_CREDS")
+
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+creds = ServiceAccountCredentials.from_json_keyfile_name("/etc/secrets/credentials.json", scope)
+
 client = gspread.authorize(creds)
 
 sheet = client.open("SchoolData")
