@@ -1,7 +1,10 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_from_directory
 from chat_logic import parse_query
 
 app = Flask(__name__)
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory('static', 'favicon.ico')
 user_sessions = {}
 
 @app.route("/", methods=["GET", "POST"])
