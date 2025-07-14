@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
 <head>
     <title>Smart School Bot</title>
@@ -26,5 +26,29 @@
     </div>
     
 
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School EduBot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .chat { min-height: 50px; margin-bottom: 20px; }
+        input[type="text"] { width: 100%; padding: 10px; }
+        button { padding: 10px 20px; }
+    </style>
+</head>
+<body>
+    <h1>School EduBot</h1>
+    <div class="chat">{{ chat | safe }}</div>
+    <form method="POST">
+        <label for="query">Enter your name or query</label>
+        <input type="text" id="query" name="query" placeholder="Enter your name or query" required>
+        <button type="submit">Submit</button>
+    </form>
 </body>
 </html>
