@@ -73,16 +73,26 @@
 #     for hw in homework_today:
 #         response += f"- {hw['Subject']}: {hw['Homework']}\n"
 #     return response.strip()
+import os
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import datetime
 import logging
+
 logging.basicConfig(level=logging.INFO)
 
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name("/etc/secrets/credentials.json", scopes=scope)
-client = gspread.authorize(creds)
-sheet = client.open("SchoolData")
+
+# Dynamically set the credentials path
+CREDENTIALS_PATH = os.getenv("GOOGLE_CREDENTIALS_PATH", r"C:\Users\Vishesh\OneDrive\Desktop\edubot\credentials.json")
+
+try:
+    creds = ServiceAccountCredentials.from_json_keyfile_name(CREDENTIALS_PATH, scopes=scope)
+    client = gspread.authorize(creds)
+    sheet = client.open("SchoolData")
+except FileNotFoundError:
+    logging.error(f"Credentials file not found at: {CREDENTIALS_PATH}")
+    raise
 
 def get_class_by_name(name):
     try:
