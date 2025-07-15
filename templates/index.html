@@ -1,31 +1,100 @@
-<!-- <!DOCTYPE html>
-<html>
+<!-- 
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Smart School Bot</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School EduBot</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
-        body { font-family: "Arial", sans-serif; background: #f9f9f9; margin: 40px; }
-        h1 { color: #333; }
-        .chat-box { padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 0 5px rgba(0,0,0,0.1); width: 500px; margin: auto; }
-        input[type=text] { width: 90%; padding: 10px; margin-top: 10px; border-radius: 5px; border: 1px solid #ccc; }
-        input[type=submit] { padding: 10px 15px; border: none; background: #4CAF50; color: white; border-radius: 5px; cursor: pointer; margin-top: 10px; }
+        .chat-wrapper {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .chat-container {
+            flex: 1; /* Take up remaining space */
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            padding: 1rem 0;
+        }
+        .chat-message {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideIn 0.3s ease-out forwards;
+        }
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .user-message {
+            background-color: #3b82f6;
+            color: white;
+            align-self: flex-end;
+        }
+        .bot-message {
+            background-color: #e5e7eb;
+            color: black;
+            align-self: flex-start;
+        }
+        .message {
+            max-width: 70%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            margin: 5px 10px;
+            word-wrap: break-word;
+        }
+        .input-container {
+            flex-shrink: 0; /* Prevent shrinking */
+            padding: 10px;
+            border-top: 1px solid #e5e7eb;
+            background: white;
+        }
+        .input-field {
+            transition: all 0.2s;
+        }
+        .input-field:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        .submit-btn {
+            transition: background-color 0.2s;
+        }
+        .submit-btn:hover {
+            background-color: #2563eb;
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
     </style>
-   <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}?v=2" type="image/x-icon">
-
 </head>
-<body>
-    <div class="chat-box">
-        <h1>📚 Smart School Bot</h1>
-        <form method="POST">
-            <label>Your Message:</label><br>
-            <input type="text" name="query" placeholder="Ask your question here..." required />
-            <br>
-            <input type="submit" value="Ask">
-        </form>
-        <hr>
-        <p><strong>Bot:</strong> {{ chat }}</p>
+<body class="bg-gray-100">
+    <div class="chat-wrapper">
+        <div class="w-full max-w-2xl mx-auto bg-white rounded-lg shadow-lg flex flex-col h-full">
+            <div class="bg-blue-600 text-white p-4 rounded-t-lg">
+                <h1 class="text-2xl font-bold text-center">School EduBot</h1>
+            </div>
+            <div class="chat-container" id="chatContainer">
+                {% for message in chat_history %}
+                    <div class="message {{ 'user-message' if message.is_user else 'bot-message' }} chat-message">
+                        {{ message.text | safe }}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="input-container">
+                <form method="POST" class="flex gap-2">
+                    <input type="text" name="query" placeholder="Enter your name or query" 
+                           class="input-field flex-1 p-2 border rounded-lg focus:outline-none" required>
+                    <button type="submit" class="submit-btn bg-blue-500 text-white p-2 rounded-lg">Send</button>
+                </form>
+            </div>
+        </div>
     </div>
-    
-
 </body>
 </html> -->
 <!DOCTYPE html>
@@ -34,21 +103,112 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>School EduBot</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .chat { min-height: 50px; margin-bottom: 20px; }
-        input[type="text"] { width: 100%; padding: 10px; }
-        button { padding: 10px 20px; }
+        .chat-wrapper {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background-color: #f3f4f6;
+        }
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            background-color: white;
+            border-radius: 10px;
+            margin: 0.5rem;
+        }
+        .chat-message {
+            max-width: 60%;
+            margin-bottom: 0.5rem;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .user-message {
+            background-color: #3b82f6;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+        .bot-message {
+            background-color: #e5e7eb;
+            color: #1f2937;
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+        .message-time {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+            text-align: right;
+        }
+        .input-container {
+            flex-shrink: 0;
+            padding: 1rem;
+            background-color: white;
+            border-top: 1px solid #e5e7eb;
+        }
+        .input-field {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 9999px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .input-field:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        .submit-btn {
+            margin-left: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background-color: #3b82f6;
+            color: white;
+            border-radius: 9999px;
+            transition: background-color 0.2s;
+        }
+        .submit-btn:hover {
+            background-color: #2563eb;
+        }
+        @media (max-width: 640px) {
+            .chat-message { max-width: 80%; }
+            .input-field { width: calc(100% - 4rem); }
+        }
     </style>
 </head>
-<body>
-    <h1>School EduBot</h1>
-    <div class="chat">{{ chat | safe }}</div>
-    <form method="POST">
-        <label for="query">Enter your name or query</label>
-        <input type="text" id="query" name="query" placeholder="Enter your name or query" required>
-        <button type="submit">Submit</button>
-    </form>
+<body class="bg-gray-100">
+    <div class="chat-wrapper mx-auto max-w-2xl w-full">
+        <div class="bg-blue-600 text-white p-4 rounded-t-lg shadow-md">
+            <h1 class="text-2xl font-bold text-center">School EduBot</h1>
+        </div>
+        <div class="chat-container" id="chatContainer">
+            {% for message in chat_history %}
+                <div class="chat-message {{ 'user-message' if message.is_user else 'bot-message' }}">
+                    {{ message.text | safe }}
+                    <div class="message-time">{{ "11:04 PM" }}</div> <!-- Placeholder timestamp -->
+                </div>
+            {% endfor %}
+        </div>
+        <div class="input-container flex items-center">
+            <form method="POST" class="w-full flex">
+                <input type="text" name="query" placeholder="Type your message..." 
+                       class="input-field flex-1" required>
+                <button type="submit" class="submit-btn">Send</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        const chatContainer = document.getElementById('chatContainer');
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    </script>
 </body>
 </html>

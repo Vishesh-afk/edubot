@@ -49,7 +49,7 @@ Thumbs.db
 # Credentials / secrets
 credentials.json
 # Byte-compiled / optimized / DLL files
-__pycache__
+__pycache__/
 *.py[cod]
 
 # Flask server-side session folder
