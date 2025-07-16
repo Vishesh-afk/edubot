@@ -131,11 +131,9 @@ def index():
 
         if not user_query:
             session["chat_history"].append({"text": "❌ Please enter a message.", "is_user": False})
-            logging.info(f"Session after empty query: {session}")
             return render_template("index.html", chat_history=session["chat_history"])
 
         session["chat_history"].append({"text": user_query, "is_user": True})
-        logging.info(f"Session after adding query: {session}")
 
         # Greeting + Name Prompt
         if not session.get("name") and any(greet in user_query for greet in ["hi", "hello", "hey"]):
@@ -150,10 +148,10 @@ def index():
                 session["class"] = class_name
                 bot_response = f"✅ Hello {user_query.title()}! You are in class {class_name}. You can now ask for timetable or homework."
         else:
-            bot_response = parse_query(user_query, user_id)
+            class_name = session.get("class")
+            bot_response = parse_query(user_query, user_id, class_name)
 
         session["chat_history"].append({"text": bot_response, "is_user": False})
-        logging.info(f"Session before render: {session}")
         return render_template("index.html", chat_history=session["chat_history"])
 
     return render_template("index.html", chat_history=session["chat_history"])
@@ -181,8 +179,9 @@ def whatsapp_bot():
             whatsapp_user_data[sender] = user_info
             reply = f"✅ Hello {name}! You are in class {class_name}. You can now ask for timetable or homework."
     else:
-        user_id = sender  # Use phone number as user ID
-        reply = parse_query(incoming_msg, user_id)
+        user_id = sender
+        class_name = user_info.get("class")
+        reply = parse_query(incoming_msg, user_id, class_name)
 
     # Send reply via Twilio
     client.messages.create(
